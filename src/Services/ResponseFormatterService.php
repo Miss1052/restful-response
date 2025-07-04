@@ -2,10 +2,14 @@
 
 namespace Cjj\RestfulResponse\Services;
 
+use Cjj\RestfulResponse\Contracts\PaginationFormatterInterface;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Cjj\RestfulResponse\Contracts\ResponseFormatterInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator as SimplePaginator;
+use Illuminate\Pagination\CursorPaginator;
 
 class ResponseFormatterService implements ResponseFormatterInterface
 {
@@ -31,13 +35,40 @@ class ResponseFormatterService implements ResponseFormatterInterface
         $this->translator = $translator;
     }
 
-    public function success(mixed $data = null, string $message = null, int $code = 200, array $headers = []): JsonResponse
+    public function successV1(mixed $data = null, string $message = null, int $code = 200, array $headers = []): JsonResponse
     {
         $response = [
             $this->config['success_wrapper'] => true,
             $this->config['message_wrapper'] => $message ?? $this->getStatusMessage($code),
         ];
 
+
+        if ($data !== null) {
+            $response[$this->config['data_wrapper']] = $data;
+        }
+
+        $this->addMeta($response, $code);
+
+        return response()->json($response, $code, $headers);
+    }
+
+
+    public function success(mixed $data = null, string $message = null,int $code = 200,array $headers = [],bool $autoPaginate = true): JsonResponse
+    {
+        if ($autoPaginate && (
+                $data instanceof LengthAwarePaginator
+                || $data instanceof SimplePaginator
+                || $data instanceof CursorPaginator
+            )) {
+            $paginationFormatter = app(PaginationFormatterInterface::class);
+            $list = $data->items();
+            $formattedData = $paginationFormatter->format($data, $list);
+            $data = $formattedData;
+        }
+        $response = [
+            $this->config['success_wrapper'] => true,
+            $this->config['message_wrapper'] => $message ?? $this->getStatusMessage($code),
+        ];
 
         if ($data !== null) {
             $response[$this->config['data_wrapper']] = $data;

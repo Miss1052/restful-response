@@ -18,7 +18,6 @@ class PaginationFormatterService implements PaginationFormatterInterface
      */
     public function __construct(array $config = [])
     {
-
         $this->config = array_merge([
             'list_key' => 'list',
             'pagination_key' => 'pagination',

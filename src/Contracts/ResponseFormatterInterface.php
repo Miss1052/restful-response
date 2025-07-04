@@ -11,6 +11,8 @@ interface ResponseFormatterInterface
      */
     public function success(mixed $data = null, string $message = null, int $code = 200, array $headers = []): JsonResponse;
 
+
+
     /**
      * 错误响应
      */
