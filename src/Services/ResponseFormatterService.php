@@ -3,6 +3,7 @@
 namespace Cjj\RestfulResponse\Services;
 
 use Illuminate\Contracts\Translation\Translator;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Cjj\RestfulResponse\Contracts\ResponseFormatterInterface;
 
@@ -10,7 +11,7 @@ class ResponseFormatterService implements ResponseFormatterInterface
 {
     protected array $config;
     /**
-     * @var \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|mixed
+     * @var \Illuminate\Contracts\Foundation\Application|Application|mixed
      */
 //    private Translator $translator;
 
@@ -18,7 +19,7 @@ class ResponseFormatterService implements ResponseFormatterInterface
     {
         $this->config = array_merge([
             'include_timestamp' => true,
-            'include_status_text' => true,
+            'include_status_text' => false,
             'data_wrapper' => 'data',
             'message_wrapper' => 'message',
             'success_wrapper' => 'success',
@@ -105,12 +106,14 @@ class ResponseFormatterService implements ResponseFormatterInterface
 
     protected function addMeta(array &$response, int $code): void
     {
+        \Log::info('addme');
         $meta = [];
 
         if ($this->config['include_timestamp']) {
             $meta['timestamp'] = now()->toISOString();
         }
 
+        \Log::info('confi',['config'=>$this->config]);
         if ($this->config['include_status_text']) {
             $meta['status_code'] = $code;
             $meta['status_text'] = $this->getStatusText($code);

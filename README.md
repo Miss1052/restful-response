@@ -18,4 +18,4 @@
 ## 安装
 
 ```bash
-composer require cjj/laravel-restful-response
+composer require your-vendor/laravel-restful-response

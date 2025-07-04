@@ -18,12 +18,19 @@ class RestfulResponseServiceProvider extends ServiceProvider
         // 合并配置
         $this->mergeConfigFrom(__DIR__ . '/../../config/restful-response.php', 'restful-response');
 
-        // 绑定服务
+        // 绑定服务 ResponseFormatterService
         $this->app->singleton(ResponseFormatterInterface::class, function ($app) {
             return new ResponseFormatterService($app['config']['restful-response']);
         });
 
-        $this->app->singleton(PaginationFormatterInterface::class, PaginationFormatterService::class);
+        // 绑定服务 PaginationFormatterService
+        $this->app->singleton(PaginationFormatterInterface::class, function ($app) {
+            return new PaginationFormatterService([
+                'list_key' => 'rows',        // 你需要的自定义key
+                'pagination_key' => 'pager', // 你需要的自定义key
+            ]);
+        });
+
 
         // 注册异常处理器
         $this->app->singleton('restful-response.exception-handler', function ($app) {

@@ -11,7 +11,7 @@ return [
     'include_timestamp' => env('API_INCLUDE_TIMESTAMP', true),
 
     // 是否包含状态文本
-    'include_status_text' => env('API_INCLUDE_STATUS_TEXT', true),
+    'include_status_text' => env('API_INCLUDE_STATUS_TEXT', false),
 
     // 默认消息
     'success_message' => 'Success',
@@ -28,6 +28,13 @@ return [
     'pagination' => [
         'include_links' => true,
         'include_meta' => true,
+
+        // 新增：自定义字段名
+        'list_key' => 'list',
+        'pagination_key' => 'pagination',
+
+        // 游标分页相关
+        'include_cursor' => true,
     ],
 
     // 异常处理
